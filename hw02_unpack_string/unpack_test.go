@@ -1,4 +1,4 @@
-package hw02unpackstring
+package main
 
 import (
 	"errors"
@@ -33,13 +33,24 @@ func TestUnpack(t *testing.T) {
 	}
 }
 
-func TestUnpackInvalidString(t *testing.T) {
+func TestUnpackStringInvalid(t *testing.T) {
 	invalidStrings := []string{"3abc", "45", "aaa10b"}
 	for _, tc := range invalidStrings {
 		tc := tc
 		t.Run(tc, func(t *testing.T) {
 			_, err := Unpack(tc)
-			require.Truef(t, errors.Is(err, ErrInvalidString), "actual error %q", err)
+			require.Truef(t, errors.Is(err, ErrStringInvalid), "actual error %q", err)
+		})
+	}
+}
+
+func TestUnpackStringEmpty(t *testing.T) {
+	invalidStrings := []string{""}
+	for _, tc := range invalidStrings {
+		tc := tc
+		t.Run(tc, func(t *testing.T) {
+			_, err := Unpack(tc)
+			require.Truef(t, errors.Is(err, ErrStringEmpty), "actual error %q", err)
 		})
 	}
 }
