@@ -26,7 +26,7 @@ func getChar(input string, offset int) (rune, int, bool) {
 func Unpack(input string) (string, error) {
 
 	// init result
-	var result string = ""
+	var result string
 	var runeCurrent, runeNext rune
 	var index, widthCurrent, widthNext int
 	var escapedCurrent, escapedNext bool
@@ -46,7 +46,7 @@ func Unpack(input string) (string, error) {
 		runeNext, widthNext, escapedNext = getChar(input, index+widthCurrent)
 
 		// decide on operation
-		switch true {
+		switch {
 		case unicode.IsLetter(runeCurrent) && escapedCurrent:
 			{
 				// current is an escaped letter, bad string
