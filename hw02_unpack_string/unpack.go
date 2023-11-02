@@ -41,7 +41,6 @@ func Unpack(input string) (string, error) {
 
 	// iterate over the string by runes
 	for index = 0; index < len(input); index += widthCurrent {
-
 		// get rune current
 		runeCurrent, widthCurrent, escapedCurrent = getChar(input, index)
 
