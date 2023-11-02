@@ -8,8 +8,10 @@ import (
 	"unicode/utf8"
 )
 
-var ErrInvalidString = errors.New("string is invalid")
-var ErrEmptyString = errors.New("string is empty")
+var (
+	ErrInvalidString = errors.New("string is invalid")
+	ErrEmptyString   = errors.New("string is empty")
+)
 
 func getChar(input string, offset int) (rune, int, bool) {
 	char, widthCurrent := utf8.DecodeRuneInString(input[offset:])
@@ -36,8 +38,7 @@ func Unpack(input string) (string, error) {
 	}
 
 	// iterate over the string by runes
-	for index, widthCurrent = 0, 0; index < len(input); index += widthCurrent {
-
+	for index = 0; index < len(input); index += widthCurrent {
 		// get rune current
 		runeCurrent, widthCurrent, escapedCurrent = getChar(input, index)
 
