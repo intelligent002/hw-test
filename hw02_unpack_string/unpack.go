@@ -47,71 +47,84 @@ func Unpack(input string) (string, error) {
 
 		// decide on operation
 		switch {
-		case unicode.IsLetter(runeCurrent) && escapedCurrent:
-			{
-				// current is an escaped letter, bad string
-				return "", ErrInvalidString
-			}
-		case unicode.IsLetter(runeCurrent) && unicode.IsLetter(runeNext):
-			{
-				// current is a letter, next is letter - add current
-				result += string(runeCurrent)
-			}
-		case unicode.IsLetter(runeCurrent) && string(runeNext) == "\\":
-			{
-				// current is a letter, next is an escaped backslash - add current
-				result += string(runeCurrent)
-			}
-		case unicode.IsLetter(runeCurrent) && unicode.IsDigit(runeNext) && escapedNext:
-			{
-				// current is a letter, next is an escaped digit - add current
-				result += string(runeCurrent)
-			}
-		case unicode.IsLetter(runeCurrent) && unicode.IsDigit(runeNext) && !escapedNext:
-			{
-				// current is a letter, next is a non escaped digit - multiply current by digit
-				result += strings.Repeat(string(runeCurrent), int(runeNext-'0'))
-				// and skip the upcoming digit
-				index += widthNext
-			}
-		case unicode.IsDigit(runeCurrent) && !escapedCurrent:
-			{
-				// current is a non escaped digit, bad string
-				return "", ErrInvalidString
-			}
-		case unicode.IsDigit(runeCurrent) && escapedCurrent && unicode.IsDigit(runeNext) && escapedNext:
-			{
-				// current is an escaped digit, next is an escaped digit - add current
-				result += string(runeCurrent)
-			}
-		case unicode.IsDigit(runeCurrent) && escapedCurrent && unicode.IsDigit(runeNext) && !escapedNext:
-			{
-				// current is an escaped digit, next is a non escaped digit - multiply current by digit
-				result += strings.Repeat(string(runeCurrent), int(runeNext-'0'))
-				// and skip the upcoming digit
-				index += widthNext
-			}
-		case string(runeCurrent) == "\\" && unicode.IsLetter(runeNext):
-			{
-				// current is an escaped backslash, next is any letter - add current
-				result += string(runeCurrent)
-			}
-		case string(runeCurrent) == "\\" && unicode.IsDigit(runeNext) && escapedNext:
-			{
-				// current is an escaped backslash, next is an escaped digit - add current
-				result += string(runeCurrent)
-			}
-		case string(runeCurrent) == "\\" && unicode.IsDigit(runeNext) && !escapedNext:
-			{
-				// current is an escaped backslash, next is a non escaped digit - multiply current by digit
-				result += strings.Repeat(string(runeCurrent), int(runeNext-'0'))
-				// and skip the upcoming digit
-				index += widthNext
-			}
 		case widthNext == 0:
 			{
 				// last rune - just add
 				result += string(runeCurrent)
+			}
+		case unicode.IsDigit(runeCurrent):
+			{
+				if !escapedCurrent {
+					// current is a non escaped digit, bad string
+					return "", ErrInvalidString
+				}
+				if unicode.IsLetter(runeNext) {
+					// current is an escaped digit, next is a letter - add current
+					result += string(runeCurrent)
+				}
+				if unicode.IsDigit(runeNext) {
+					if escapedNext {
+						// current is an escaped digit, next is an escaped digit - add current
+						result += string(runeCurrent)
+					}
+					if !escapedNext {
+						// current is an escaped digit, next is a non escaped digit - multiply current by digit
+						result += strings.Repeat(string(runeCurrent), int(runeNext-'0'))
+						// and skip the upcoming digit
+						index += widthNext
+					}
+				}
+			}
+		case unicode.IsLetter(runeCurrent):
+			{
+				switch {
+				case escapedCurrent:
+					{
+						// current is an escaped letter, bad string
+						return "", ErrInvalidString
+					}
+				case unicode.IsLetter(runeNext):
+					{
+						// current is a letter, next is letter - add current
+						result += string(runeCurrent)
+					}
+				case string(runeNext) == "\\":
+					{
+						// current is a letter, next is an escaped backslash - add current
+						result += string(runeCurrent)
+					}
+				case unicode.IsDigit(runeNext) && escapedNext:
+					{
+						// current is a letter, next is an escaped digit - add current
+						result += string(runeCurrent)
+					}
+				case unicode.IsDigit(runeNext) && !escapedNext:
+					{
+						// current is a letter, next is a non escaped digit - multiply current by digit
+						result += strings.Repeat(string(runeCurrent), int(runeNext-'0'))
+						// and skip the upcoming digit
+						index += widthNext
+					}
+				}
+			}
+		case string(runeCurrent) == "\\":
+			{
+				if unicode.IsLetter(runeNext) {
+					// current is an escaped backslash, next is any letter - add current
+					result += string(runeCurrent)
+				}
+				if unicode.IsDigit(runeNext) {
+					if escapedNext {
+						// current is an escaped backslash, next is an escaped digit - add current
+						result += string(runeCurrent)
+					}
+					if !escapedNext {
+						// current is an escaped backslash, next is a non escaped digit - multiply current by digit
+						result += strings.Repeat(string(runeCurrent), int(runeNext-'0'))
+						// and skip the upcoming digit
+						index += widthNext
+					}
+				}
 			}
 		}
 	}
