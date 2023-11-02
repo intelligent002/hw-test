@@ -60,7 +60,7 @@ func Unpack(input string) (string, error) {
 					index += widthNext
 					continue
 				}
-				// in any other case - just add
+				// in any other case - just add the digit (stripping the escaping)
 				result += string(runeCurrent)
 				continue
 			}
@@ -77,20 +77,20 @@ func Unpack(input string) (string, error) {
 					index += widthNext
 					continue
 				}
-				// in any other case - just add
+				// in any other case - just add the letter
 				result += string(runeCurrent)
 				continue
 			}
 		case string(runeCurrent) == "\\":
 			{
 				if unicode.IsDigit(runeNext) && !escapedNext {
-					// current is a non escaped letter, next is a non escaped digit - multiply current by digit
+					// current is an escaped backslash, next is a non escaped digit - multiply current by digit
 					result += strings.Repeat(string(runeCurrent), int(runeNext-'0'))
 					// and skip the upcoming digit
 					index += widthNext
 					continue
 				}
-				// in any other case - just add
+				// in any other case - just add the backslash (stripping escaping)
 				result += string(runeCurrent)
 				continue
 			}
