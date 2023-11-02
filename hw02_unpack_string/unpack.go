@@ -28,17 +28,20 @@ func getChar(input string, offset int) (rune, int, bool) {
 func Unpack(input string) (string, error) {
 	// init result
 	var result string
-	var runeCurrent, runeNext rune
-	var index, widthCurrent, widthNext int
-	var escapedCurrent, escapedNext bool
-
 	// validate empty input
 	if len(input) == 0 {
 		return result, ErrEmptyString
 	}
+	// init iteration runes
+	var runeCurrent, runeNext rune
+	// init the index here, as it will be modified inside the loop, so lint will complain of ineffectual assignment
+	var index, widthCurrent, widthNext int
+	// init escape flags (next evolution round is structures with properties and methods - a bit of an overkill)
+	var escapedCurrent, escapedNext bool
 
 	// iterate over the string by runes
 	for index = 0; index < len(input); index += widthCurrent {
+
 		// get rune current
 		runeCurrent, widthCurrent, escapedCurrent = getChar(input, index)
 
@@ -100,7 +103,7 @@ func Unpack(input string) (string, error) {
 }
 
 func main() {
-	result, e := Unpack("a4")
+	result, e := Unpack("1a4")
 	if e != nil {
 		fmt.Println(e.Error())
 	} else {
