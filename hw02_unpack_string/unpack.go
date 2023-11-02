@@ -24,7 +24,6 @@ func getChar(input string, offset int) (rune, int, bool) {
 }
 
 func Unpack(input string) (string, error) {
-
 	// init result
 	var result string
 	var runeCurrent, runeNext rune
@@ -38,13 +37,10 @@ func Unpack(input string) (string, error) {
 
 	// iterate over the string by runes
 	for index, widthCurrent = 0, 0; index < len(input); index += widthCurrent {
-
 		// get rune current
 		runeCurrent, widthCurrent, escapedCurrent = getChar(input, index)
-
 		// get rune next
 		runeNext, widthNext, escapedNext = getChar(input, index+widthCurrent)
-
 		// decide on operation
 		switch {
 		case widthNext == 0:
