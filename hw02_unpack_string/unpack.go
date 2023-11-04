@@ -1,8 +1,7 @@
-package main
+package hw02_unpack_string
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -99,13 +98,4 @@ func Unpack(input string) (string, error) {
 		}
 	}
 	return result, nil
-}
-
-func main() {
-	result, e := Unpack("1a4")
-	if e != nil {
-		fmt.Println(e.Error())
-	} else {
-		fmt.Println("result is: ", result)
-	}
 }
