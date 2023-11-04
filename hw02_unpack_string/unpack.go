@@ -7,10 +7,7 @@ import (
 	"unicode/utf8"
 )
 
-var (
-	ErrInvalidString = errors.New("string is invalid")
-	ErrEmptyString   = errors.New("string is empty")
-)
+var ErrInvalidString = errors.New("string is invalid")
 
 func getChar(input string, offset int) (rune, int, bool) {
 	char, widthCurrent := utf8.DecodeRuneInString(input[offset:])
@@ -28,9 +25,9 @@ func Unpack(input string) (string, error) {
 	// init result
 	var result string
 	// validate empty input
-	if len(input) == 0 {
-		return result, ErrEmptyString
-	}
+	// if len(input) == 0 {
+	//	return result, ErrEmptyString
+	//}
 	// init iteration runes
 	var runeCurrent, runeNext rune
 	// init the index here, as it will be modified inside the loop, so lint will complain of ineffectual assignment
