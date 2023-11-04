@@ -92,6 +92,11 @@ func Unpack(input string) (string, error) {
 				result += string(runeCurrent)
 				continue
 			}
+		default:
+			{
+				// current is not a slash/digit/letter, bad string
+				return "", ErrInvalidString
+			}
 		}
 	}
 	return result, nil
