@@ -28,6 +28,8 @@ func TestUnpack(t *testing.T) {
 		{input: `qwe\\\33`, expected: `qwe\333`},
 		{input: `🙂3`, expected: "🙂🙂🙂"},
 		{input: "ab২c", expected: "ab২c"},
+		{input: "руссишь текстен", expected: "руссишь текстен"},
+		{input: "עם ישראל חי", expected: "עם ישראל חי"},
 	}
 
 	for _, tc := range tests {
