@@ -155,7 +155,7 @@ func Unpack(input string) (string, error) {
 				result += string(charCurr.letter)
 				continue
 			}
-		default:
+		case Unsupported:
 			{
 				// Curr is not a slash/digit/letter, bad string
 				return "", ErrUnsupportedCharacters
