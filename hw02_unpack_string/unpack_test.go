@@ -56,22 +56,3 @@ func TestUnpackInvalidString(t *testing.T) {
 		})
 	}
 }
-
-//
-//func TestUnpackUnsupportedCharacters(t *testing.T) {
-//	invalidStrings := []string{
-//		"<xml>",
-//		"ab২c",
-//		"𞥐𞥑𞥒𞥓𞥔𞥕𞥖𞥗𞥘𞥙", // Adlam_script digits should fail
-//		"русишь текстен",
-//		"עם ישראל חי",
-//		":./)(*",
-//	}
-//	for _, tc := range invalidStrings {
-//		tc := tc
-//		t.Run(tc, func(t *testing.T) {
-//			_, err := Unpack(tc)
-//			require.Truef(t, errors.Is(err, ErrUnsupportedCharacters), "actual error %q", err)
-//		})
-//	}
-//}

@@ -71,6 +71,7 @@ func getChar(input string, offset int) character {
 
 	return char
 }
+
 func handleDigit(charCurr, charNext character, result string, index int) (string, int, error) {
 	switch {
 	case !charCurr.escaped:
@@ -98,6 +99,7 @@ func handleDigit(charCurr, charNext character, result string, index int) (string
 	}
 	return result, index, nil
 }
+
 func handleLetter(charCurr, charNext character, result string, index int) (string, int, error) {
 	switch {
 	case charCurr.escaped:
@@ -125,6 +127,7 @@ func handleLetter(charCurr, charNext character, result string, index int) (strin
 	}
 	return result, index, nil
 }
+
 func handleBackslash(charCurr, charNext character, result string, index int) (string, int, error) {
 	switch {
 	case charNext.kind == Digit && !charNext.escaped:
@@ -147,6 +150,7 @@ func handleBackslash(charCurr, charNext character, result string, index int) (st
 	}
 	return result, index, nil
 }
+
 func Unpack(input string) (string, error) {
 	// init result
 	var result string
