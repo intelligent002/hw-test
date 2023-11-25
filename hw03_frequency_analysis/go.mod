@@ -1,4 +1,4 @@
-module github.com/intelligent002/hw-test/hw03_frequency_analysis
+module github.com/intelligent002/hw-test/hw03frequencyanalysis
 
 go 1.19
 
