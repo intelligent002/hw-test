@@ -11,7 +11,6 @@ type wordsCount struct {
 }
 
 func Top10(input string) []string {
-
 	input = strings.ToLower(input)
 	wordsRaw := strings.Fields(input)
 	wordsCounted := make(map[string]int)
