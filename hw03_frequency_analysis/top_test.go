@@ -44,15 +44,14 @@ var text = `Как видите, он  спускается  по  лестни�
 		В этот вечер...`
 
 func TestByFunctionality(t *testing.T) {
+	input := "b C, - 'c' a a a b b"
 	t.Run("Sanitize input", func(t *testing.T) {
-		input := "b C, - 'c' a a a b b"
 		expected := []string{
 			"b", "c", "c", "a", "a", "a", "b", "b",
 		}
 		require.Equal(t, expected, makeWordsValid(input))
 	})
 	t.Run("Count sanitized", func(t *testing.T) {
-		input := "b C, - 'c' a a a b b"
 		expected := map[string]int{
 			"b": 3,
 			"c": 2,
@@ -61,7 +60,6 @@ func TestByFunctionality(t *testing.T) {
 		require.Equal(t, expected, makeWordsCounted(makeWordsValid(input)))
 	})
 	t.Run("Sort counted", func(t *testing.T) {
-		input := "b C, - 'c' a a a b b"
 		expected := []wordsCount{
 			{word: "a", count: 3},
 			{word: "b", count: 3},
@@ -70,7 +68,6 @@ func TestByFunctionality(t *testing.T) {
 		require.Equal(t, expected, makeWordsSorted(makeWordsCounted(makeWordsValid(input))))
 	})
 	t.Run("Cut sorted", func(t *testing.T) {
-		input := "b C, - 'c' a a a b b"
 		expected := []string{
 			"a", "b",
 		}
