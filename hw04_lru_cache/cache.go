@@ -5,7 +5,7 @@ import "sync"
 type Key string
 
 /**
- * item will be stored in linked list
+ * item will be stored in linked list.
  */
 type cachedItem struct {
 	k Key
