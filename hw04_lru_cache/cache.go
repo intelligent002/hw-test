@@ -49,7 +49,7 @@ func (c *lruCache) Get(key Key) (interface{}, bool) {
 	defer c.mutex.Unlock()
 
 	item, isSet := c.items[key]
-	if isSet != true {
+	if !isSet {
 		return nil, false
 	}
 	c.queue.MoveToFront(item)
