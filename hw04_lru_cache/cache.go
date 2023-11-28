@@ -4,6 +4,9 @@ import "sync"
 
 type Key string
 
+/**
+ * item will be stored in linked list
+ */
 type cachedItem struct {
 	k Key
 	v interface{}
@@ -52,7 +55,9 @@ func (c *lruCache) Get(key Key) (interface{}, bool) {
 	if !isSet {
 		return nil, false
 	}
+
 	c.queue.MoveToFront(item)
+
 	return item.Value.(cachedItem).v, true
 }
 
