@@ -2,7 +2,6 @@ package hw05parallelexecution
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 )
 
@@ -13,7 +12,8 @@ type Task func() (string, error)
 type counter struct {
 	sync.Mutex
 	threshold    int
-	current      int
+	currentOk    int
+	currentError int
 	ignoreErrors bool
 }
 
@@ -24,18 +24,33 @@ func newCounter(threshold int) *counter {
 	}
 }
 
-func (c *counter) increment() {
+const (
+	stateOk = iota
+	stateError
+)
+
+func (c *counter) increment(state int) {
 	c.Lock()
 	defer c.Unlock()
 
-	c.current++
+	switch state {
+	case stateOk:
+		{
+			c.currentOk++
+		}
+	case stateError:
+	default:
+		{
+			c.currentError++
+		}
+	}
 }
 
 func (c *counter) reachedThreshold() bool {
 	c.Lock()
 	defer c.Unlock()
 
-	return !c.ignoreErrors && c.current >= c.threshold
+	return !c.ignoreErrors && c.currentError >= c.threshold
 }
 
 func Run(tasks []Task, n int, m int) error {
@@ -51,12 +66,11 @@ func Run(tasks []Task, n int, m int) error {
 			defer wg.Done()
 
 			for task := range tasksChannel {
-				var res, err = task()
+				var _, err = task()
 				if err != nil {
-					fmt.Println(err)
-					ctr.increment()
+					ctr.increment(stateError)
 				} else {
-					fmt.Println(res)
+					ctr.increment(stateOk)
 				}
 			}
 		}()

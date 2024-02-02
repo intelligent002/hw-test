@@ -12,8 +12,8 @@ import (
 	"go.uber.org/goleak"
 )
 
-func monkey() bool {
-	return rand.Float64() < 0.999
+func maybe(probability float64) bool {
+	return rand.Float64() < probability
 }
 
 func TestRun(t *testing.T) {
@@ -26,11 +26,16 @@ func TestRun(t *testing.T) {
 		var runTasksCount int32
 
 		for i := 0; i < tasksCount; i++ {
-			err := fmt.Errorf("error from task %d", i)
+			err := fmt.Errorf("errors from task %d", i)
+			res := fmt.Sprintf("result from task %d", i)
 			tasks = append(tasks, func() (string, error) {
 				time.Sleep(time.Millisecond * time.Duration(rand.Intn(100)))
 				atomic.AddInt32(&runTasksCount, 1)
-				return "", err
+				if maybe(0.000000001) {
+					return res, nil
+				} else {
+					return "", err
+				}
 			})
 		}
 
@@ -50,13 +55,19 @@ func TestRun(t *testing.T) {
 		var sumTime time.Duration
 
 		for i := 0; i < tasksCount; i++ {
+			err := fmt.Errorf("errors from task %d", i)
+			res := fmt.Sprintf("result from task %d", i)
 			taskSleep := time.Millisecond * time.Duration(rand.Intn(100))
 			sumTime += taskSleep
 
 			tasks = append(tasks, func() (string, error) {
 				time.Sleep(taskSleep)
 				atomic.AddInt32(&runTasksCount, 1)
-				return "", nil
+				if maybe(0.9999999999) {
+					return res, nil
+				} else {
+					return "", err
+				}
 			})
 		}
 
@@ -89,7 +100,7 @@ func TestRun(t *testing.T) {
 				time.Sleep(taskSleep)
 
 				atomic.AddInt32(&runTasksCount, 1)
-				if monkey() {
+				if maybe(0.9999999999) {
 					return res, nil
 				} else {
 					return "", err
