@@ -41,9 +41,11 @@ func (c *counter) increment(state executionResult) {
 			c.currentOk++
 		}
 	case resultError:
-	default:
 		{
 			c.currentError++
+		}
+	default:
+		{
 		}
 	}
 }
