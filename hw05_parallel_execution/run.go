@@ -45,8 +45,6 @@ func (c *counter) increment(state executionResult) {
 			c.currentError++
 		}
 	default:
-		{
-		}
 	}
 }
 

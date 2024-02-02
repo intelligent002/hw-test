@@ -3,13 +3,12 @@ package hw05parallelexecution
 import (
 	"errors"
 	"fmt"
+	"github.com/stretchr/testify/require"
+	"go.uber.org/goleak"
 	"math/rand"
 	"sync/atomic"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/require"
-	"go.uber.org/goleak"
 )
 
 func maybe(probability float64) bool {
@@ -33,9 +32,8 @@ func TestRun(t *testing.T) {
 				atomic.AddInt32(&runTasksCount, 1)
 				if maybe(0.000000001) {
 					return res, nil
-				} else {
-					return "", err
 				}
+				return "", err
 			})
 		}
 
@@ -65,9 +63,8 @@ func TestRun(t *testing.T) {
 				atomic.AddInt32(&runTasksCount, 1)
 				if maybe(0.9999999999) {
 					return res, nil
-				} else {
-					return "", err
 				}
+				return "", err
 			})
 		}
 
@@ -102,9 +99,8 @@ func TestRun(t *testing.T) {
 				atomic.AddInt32(&runTasksCount, 1)
 				if maybe(0.9999999999) {
 					return res, nil
-				} else {
-					return "", err
 				}
+				return "", err
 			})
 		}
 
