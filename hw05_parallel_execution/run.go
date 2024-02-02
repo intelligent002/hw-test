@@ -24,21 +24,23 @@ func newCounter(threshold int) *counter {
 	}
 }
 
+type executionResult string
+
 const (
-	stateOk = iota
-	stateError
+	resultOk    executionResult = "ok"
+	resultError executionResult = "error"
 )
 
-func (c *counter) increment(state int) {
+func (c *counter) increment(state executionResult) {
 	c.Lock()
 	defer c.Unlock()
 
 	switch state {
-	case stateOk:
+	case resultOk:
 		{
 			c.currentOk++
 		}
-	case stateError:
+	case resultError:
 	default:
 		{
 			c.currentError++
@@ -66,11 +68,11 @@ func Run(tasks []Task, n int, m int) error {
 			defer wg.Done()
 
 			for task := range tasksChannel {
-				var _, err = task()
+				_, err := task()
 				if err != nil {
-					ctr.increment(stateError)
+					ctr.increment(resultError)
 				} else {
-					ctr.increment(stateOk)
+					ctr.increment(resultOk)
 				}
 			}
 		}()
