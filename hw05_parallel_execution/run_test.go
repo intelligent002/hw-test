@@ -12,6 +12,10 @@ import (
 	"go.uber.org/goleak"
 )
 
+func maybe(probability float64) bool {
+	return rand.Float64() < probability
+}
+
 func TestRun(t *testing.T) {
 	defer goleak.VerifyNone(t)
 
@@ -22,11 +26,15 @@ func TestRun(t *testing.T) {
 		var runTasksCount int32
 
 		for i := 0; i < tasksCount; i++ {
-			err := fmt.Errorf("error from task %d", i)
-			tasks = append(tasks, func() error {
+			err := fmt.Errorf("errors from task %d", i)
+			res := fmt.Sprintf("result from task %d", i)
+			tasks = append(tasks, func() (string, error) {
 				time.Sleep(time.Millisecond * time.Duration(rand.Intn(100)))
 				atomic.AddInt32(&runTasksCount, 1)
-				return err
+				if maybe(0.000000001) {
+					return res, nil
+				}
+				return "", err
 			})
 		}
 
@@ -46,13 +54,54 @@ func TestRun(t *testing.T) {
 		var sumTime time.Duration
 
 		for i := 0; i < tasksCount; i++ {
+			err := fmt.Errorf("errors from task %d", i)
+			res := fmt.Sprintf("result from task %d", i)
 			taskSleep := time.Millisecond * time.Duration(rand.Intn(100))
 			sumTime += taskSleep
 
-			tasks = append(tasks, func() error {
+			tasks = append(tasks, func() (string, error) {
 				time.Sleep(taskSleep)
 				atomic.AddInt32(&runTasksCount, 1)
-				return nil
+				if maybe(0.9999999999) {
+					return res, nil
+				}
+				return "", err
+			})
+		}
+
+		workersCount := 5
+		maxErrorsCount := 1
+
+		start := time.Now()
+		err := Run(tasks, workersCount, maxErrorsCount)
+		elapsedTime := time.Since(start)
+		require.NoError(t, err)
+
+		require.Equal(t, runTasksCount, int32(tasksCount), "not all tasks were completed")
+		require.LessOrEqual(t, int64(elapsedTime), int64(sumTime/2), "tasks were run sequentially?")
+	})
+
+	t.Run("tasks with 50/50 errors", func(t *testing.T) {
+		tasksCount := 50
+		tasks := make([]Task, 0, tasksCount)
+
+		var runTasksCount int32
+		var sumTime time.Duration
+
+		for i := 0; i < tasksCount; i++ {
+			err := fmt.Errorf("errors from task %d", i)
+			res := fmt.Sprintf("result from task %d", i)
+			taskSleep := time.Millisecond * time.Duration(rand.Intn(100))
+			sumTime += taskSleep
+
+			tasks = append(tasks, func() (string, error) {
+				time.Sleep(taskSleep)
+
+				atomic.AddInt32(&runTasksCount, 1)
+				if maybe(0.9999999999) {
+					return res, nil
+				}
+				return "", err
 			})
 		}
 
